@@ -89,7 +89,7 @@ export default function App() {
       })
       .catch(() =>
         setNotice(
-          isNative ? "Local storage could not be opened. Reopen the project and check that the complete Resources folder was transferred." : "Local storage could not be opened. Use a regular Safari window and allow website storage.",
+          isNative ? "Local storage could not be opened. Reopen the project and check that the complete WaraqData folder was transferred." : "Local storage could not be opened. Use a regular Safari window and allow website storage.",
         ),
       );
   }, []);

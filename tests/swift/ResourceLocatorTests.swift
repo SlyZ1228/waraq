@@ -26,6 +26,14 @@ struct ResourceLocatorTests {
         let copied = try fixture("Copied.app/Resources")
         check("copied Resources directory", roots: [copied.deletingLastPathComponent()], expected: copied)
 
+        let data = try fixture("Current.app/WaraqData")
+        check("copied WaraqData directory", roots: [data.deletingLastPathComponent()], expected: data)
+        let legacy = try fixture("Current.app/Resources")
+        check("WaraqData preferred over legacy Resources", roots: [legacy.deletingLastPathComponent()], expected: data)
+
+        let nestedData = try fixture("CurrentNested.app/ArbitraryTarget.bundle/WaraqData")
+        check("WaraqData in SwiftPM bundle", roots: [temporary.appendingPathComponent("CurrentNested.app")], expected: nestedData)
+
         let direct = try fixture("Direct.app")
         check("resources directly in app", roots: [direct], expected: direct)
 
@@ -47,5 +55,12 @@ struct ResourceLocatorTests {
         guard let bundle = Bundle(url: app) else { fatalError("Could not load fixture bundle") }
         precondition(WaraqResources.locate(in: bundle)?.standardizedFileURL.path == macResources.standardizedFileURL.path)
         print("PASS: Foundation Bundle.resourceURL layout")
+
+        let currentMacData = try fixture("CurrentMac.app/Contents/Resources/WaraqData")
+        let currentMac = temporary.appendingPathComponent("CurrentMac.app")
+        try PropertyListSerialization.data(fromPropertyList: info, format: .xml, options: 0).write(to: currentMac.appendingPathComponent("Contents/Info.plist"))
+        guard let currentMacBundle = Bundle(url: currentMac) else { fatalError("Could not load current macOS fixture bundle") }
+        precondition(WaraqResources.locate(in: currentMacBundle)?.standardizedFileURL.path == currentMacData.standardizedFileURL.path)
+        print("PASS: WaraqData in Foundation macOS resourceURL layout")
     }
 }

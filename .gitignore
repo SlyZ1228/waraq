@@ -15,6 +15,7 @@ Caddyfile
 *.tsbuildinfo
 public/morphology/
 playgrounds/Waraq.swiftpm/Sources/Resources/
+playgrounds/Waraq.swiftpm/Sources/WaraqData/
 releases/
 # Personal library files and signing material belong outside source control.
 *.epub

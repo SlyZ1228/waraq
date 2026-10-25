@@ -50,7 +50,8 @@ codesign --verify --deep --strict --verbose=2 "$app"
 echo 'iPad icon assets compiled for device and simulator; simulator app signature verified.'
 
 # Reproduce the reserved Resources directory layout, which the previous fixture
-# omitted. The resulting nested-code rules can blame an unrelated root icon.
+# omitted. macOS can reject the bundle outright; iPad signing can instead select
+# nested-code rules and fail on a root icon. Do not claim identical OSStatus codes.
 legacy="$RUNNER_TEMP/WaraqLegacyLayout.app"
 cp -R "$app" "$legacy"
 mkdir -p "$legacy/Resources/Web"
@@ -64,6 +65,25 @@ python3 - <<'PY'
 import os
 from pathlib import Path
 log = (Path(os.environ['RUNNER_TEMP']) / 'legacy-signing.log').read_text()
-assert 'In subcomponent:' in log and ('AppIcon' in log or 'Assets.car' in log), log
-print('Reproduced: a root Resources directory makes the signer reject a non-code icon/asset.')
+assert ('bundle format unrecognized, invalid, or unsuitable' in log or
+        ('In subcomponent:' in log and ('AppIcon' in log or 'Assets.car' in log))), log
+print('Reproduced: adding a root Resources directory breaks bundle signing on macOS.')
+PY
+
+# Change only the data directory name, then repeat the identical signing check.
+mv "$legacy/Resources" "$legacy/WaraqData"
+codesign --force --sign - "$legacy"
+codesign --verify --deep --strict --verbose=2 "$legacy"
+python3 - <<'PY'
+import os
+import plistlib
+from pathlib import Path
+manifest = Path('playgrounds/Waraq.swiftpm/Package.swift').read_text()
+assert '.copy("WaraqData")' in manifest and '.copy("Resources")' not in manifest
+app = Path(os.environ['RUNNER_TEMP']) / 'WaraqLegacyLayout.app'
+with (app / '_CodeSignature/CodeResources').open('rb') as source:
+    files = plistlib.load(source)['files2']
+for name in ['AppIcon76x76@2x~ipad.png', 'Assets.car', 'WaraqData/Web/index.html']:
+    assert 'hash2' in files[name] and 'cdhash' not in files[name], (name, files[name])
+print('PASS: renaming only Resources to WaraqData restores signing; icons and data are sealed as resources.')
 PY

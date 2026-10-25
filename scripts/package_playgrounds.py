@@ -12,9 +12,11 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from scripts.prepare_data import normalize
 PROJECT=ROOT/'playgrounds/Waraq.swiftpm'
-RESOURCES=PROJECT/'Sources/Resources'
+RESOURCES=PROJECT/'Sources/WaraqData'
 
 def main():
+    if (PROJECT/'Sources/Resources').exists():
+        raise RuntimeError('Stale generated Sources/Resources folder found. Move it to Sources/WaraqData before packaging; Resources conflicts with Apple bundle signing.')
     subprocess.run([sys.executable, str(ROOT/'scripts/make_playgrounds_icons.py'), '--check'], check=True)
     web=RESOURCES/'Web'
     web.mkdir(parents=True,exist_ok=True)
@@ -69,7 +71,7 @@ def main():
     archive=out/'Waraq-Playgrounds.zip'
     with zipfile.ZipFile(archive,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=6) as package:
         for path in sorted(PROJECT.rglob('*')):
-            if path.is_file() and '.swiftpm' not in path.relative_to(PROJECT).parts:
+            if path.is_file() and not {'.swiftpm', '.build', '.DS_Store'}.intersection(path.relative_to(PROJECT).parts):
                 package.write(path,Path('Waraq.swiftpm')/path.relative_to(PROJECT))
     # Keep Lane's upstream XML-bearing database and our conversion source next to
     # the public binary distribution. This separate asset is not needed to run Waraq.

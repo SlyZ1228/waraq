@@ -2,7 +2,8 @@ import Foundation
 
 // App playgrounds do not always generate SwiftPM's Bundle.module accessor.
 // Locate our complete resource tree inside the application instead. The copy
-// rule preserves Resources/ in SwiftPM; Playgrounds can use the main bundle.
+// rule preserves WaraqData/ in SwiftPM; Playgrounds can use the main bundle.
+// A root folder literally named Resources changes Apple's bundle signing rules.
 enum WaraqResources {
     static func locate(in appBundle: Bundle = .main) -> URL? {
         let directories = [appBundle.resourceURL, appBundle.bundleURL].compactMap { $0 }
@@ -14,7 +15,8 @@ enum WaraqResources {
         let required = ["dictionaries.sqlite", "Web/index.html", "Web/app.js", "Web/app.css",
                         "Web/morphology/manifest.json", "Web/dictionaries/kaikki.json", "Web/dictionaries/lane.json"]
         func resourceTree(at directory: URL) -> URL? {
-            for candidate in [directory.appendingPathComponent("Resources", isDirectory: true), directory] {
+            for candidate in [directory.appendingPathComponent("WaraqData", isDirectory: true),
+                              directory.appendingPathComponent("Resources", isDirectory: true), directory] {
                 if required.allSatisfy({ relative in
                     var isDirectory: ObjCBool = false
                     return manager.fileExists(atPath: candidate.appendingPathComponent(relative).path, isDirectory: &isDirectory) && !isDirectory.boolValue
