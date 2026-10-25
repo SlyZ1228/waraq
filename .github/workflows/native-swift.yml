@@ -1,0 +1,42 @@
+name: Native Swift checks
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'playgrounds/**'
+      - 'tests/swift/**'
+      - '.github/workflows/native-swift.yml'
+  pull_request:
+    paths:
+      - 'playgrounds/**'
+      - 'tests/swift/**'
+      - '.github/workflows/native-swift.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  swift:
+    runs-on: macos-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Compile the native shell with the iOS Simulator SDK
+        run: |
+          xcrun swiftc -version
+          xcrun swiftc -swift-version 5 -parse-as-library \
+            -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" \
+            -target arm64-apple-ios17.0-simulator \
+            -o "$RUNNER_TEMP/Waraq" -lsqlite3 \
+            playgrounds/Waraq.swiftpm/Sources/*.swift
+      - name: Run resource location regression tests
+        run: |
+          xcrun swiftc -swift-version 5 \
+            -o "$RUNNER_TEMP/WaraqResourceTests" \
+            playgrounds/Waraq.swiftpm/Sources/WaraqResources.swift \
+            tests/swift/ResourceLocatorTests.swift
+          "$RUNNER_TEMP/WaraqResourceTests"
