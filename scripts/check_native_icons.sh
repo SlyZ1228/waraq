@@ -48,3 +48,22 @@ PY
 codesign --force --sign - "$app"
 codesign --verify --deep --strict --verbose=2 "$app"
 echo 'iPad icon assets compiled for device and simulator; simulator app signature verified.'
+
+# Reproduce the reserved Resources directory layout, which the previous fixture
+# omitted. The resulting nested-code rules can blame an unrelated root icon.
+legacy="$RUNNER_TEMP/WaraqLegacyLayout.app"
+cp -R "$app" "$legacy"
+mkdir -p "$legacy/Resources/Web"
+echo '<!doctype html><title>Fixture</title>' > "$legacy/Resources/Web/index.html"
+if codesign --force --sign - "$legacy" > "$RUNNER_TEMP/legacy-signing.log" 2>&1; then
+  echo 'Unexpected: the legacy Resources layout signed successfully.'
+  exit 1
+fi
+cat "$RUNNER_TEMP/legacy-signing.log"
+python3 - <<'PY'
+import os
+from pathlib import Path
+log = (Path(os.environ['RUNNER_TEMP']) / 'legacy-signing.log').read_text()
+assert 'In subcomponent:' in log and ('AppIcon' in log or 'Assets.car' in log), log
+print('Reproduced: a root Resources directory makes the signer reject a non-code icon/asset.')
+PY
