@@ -1,0 +1,24 @@
+name: Full app package checks
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'playgrounds/**'
+      - 'scripts/check_playgrounds_package.sh'
+      - '.github/workflows/package-build.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build the actual Swift app package and inspect signing
+        run: bash scripts/check_playgrounds_package.sh
