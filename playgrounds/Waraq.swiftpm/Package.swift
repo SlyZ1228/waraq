@@ -7,12 +7,13 @@ let package = Package(
     platforms: [.iOS("17.0")],
     products: [.iOSApplication(
         name: "Waraq", targets: ["AppModule"],
-        bundleIdentifier: "local.waraq.reader", displayVersion: "0.2.1", bundleVersion: "3",
-        appIcon: .placeholder(icon: .paper), accentColor: .presetColor(.green),
+        bundleIdentifier: "local.waraq.reader", displayVersion: "0.2.2", bundleVersion: "4",
+        appIcon: .asset("AppIcon"), accentColor: .presetColor(.green),
         supportedDeviceFamilies: [.pad],
         supportedInterfaceOrientations: [.portrait, .landscapeLeft, .landscapeRight, .portraitUpsideDown(.when(deviceFamilies: [.pad]))]
     )],
     targets: [.executableTarget(name: "AppModule", path: "Sources",
-        resources: [.copy("Resources")], linkerSettings: [.linkedLibrary("sqlite3")])],
+        resources: [.copy("Resources"), .process("Assets.xcassets")],
+        linkerSettings: [.linkedLibrary("sqlite3")])],
     swiftLanguageVersions: [.v5]
 )

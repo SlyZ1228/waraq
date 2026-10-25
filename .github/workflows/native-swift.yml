@@ -6,11 +6,17 @@ on:
     paths:
       - 'playgrounds/**'
       - 'tests/swift/**'
+      - 'scripts/check_native_icons.sh'
+      - 'scripts/make_playgrounds_icons.py'
+      - 'scripts/make_sample.py'
       - '.github/workflows/native-swift.yml'
   pull_request:
     paths:
       - 'playgrounds/**'
       - 'tests/swift/**'
+      - 'scripts/check_native_icons.sh'
+      - 'scripts/make_playgrounds_icons.py'
+      - 'scripts/make_sample.py'
       - '.github/workflows/native-swift.yml'
   workflow_dispatch:
 
@@ -35,6 +41,8 @@ jobs:
             playgrounds/Waraq.swiftpm/Sources/*.swift
           file "$RUNNER_TEMP/Waraq"
           xcrun vtool -show-build "$RUNNER_TEMP/Waraq"
+      - name: Compile iPad icons and verify a simulator app signature
+        run: bash scripts/check_native_icons.sh
       - name: Run resource location regression tests
         run: |
           xcrun swiftc -swift-version 5 \
