@@ -18,8 +18,8 @@ for platform in iphonesimulator iphoneos; do
     --app-icon AppIcon --output-partial-info-plist "$output/IconInfo.plist" \
     --output-format human-readable-text --warnings --errors
   test -s "$output/Assets.car"
+  # Modern actool stores the remaining sizes in Assets.car, not loose PNGs.
   test -s "$output/AppIcon76x76@2x~ipad.png"
-  test -s "$output/AppIcon83.5x83.5@2x~ipad.png"
 done
 
 cp "$RUNNER_TEMP/Waraq" "$app/Waraq"
