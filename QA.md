@@ -1,5 +1,17 @@
 # Offline / Playgrounds validation — 25 October 2026
 
+## v0.2.4 actual app-package validation
+
+The user reported continued `-67072` Run signing failure on `AppIcon76x76@2x~ipad.png`, plus the obsolete 76x76@1x warning, while the preview now loads. They could not locate Package.swift in Playgrounds to confirm the opened copy. The repeated DerivedData path suggests cached products or reuse of the same document path is possible, but this is not established as the cause.
+
+Previous checks assembled a small app fixture and compiled Swift files directly; they did not exercise the app-package builder. The new workflow runs `xcodebuild -workspace .` on the real Package.swift with the complete WaraqData tree from a checksum-pinned public release. It resolves the generated scheme, builds for iOS Simulator and device, signs each entire app with an ad-hoc identity on macOS, checks the icon metadata and verifies resource hashes for the icon, Assets.car, HTML and SQLite. Device provisioning/launch is not performed.
+
+The full package build also emits duplicate asset-catalog build-file warnings. They persisted when the explicit process rule was removed, so that experiment was reverted. These Xcode warnings remain non-blocking and are not reported as fixed. Obsolete 1x assets have been removed, and CI requires the reported 76x76@1x warning to be absent. Releases now extract to a versioned project filename to avoid ambiguous copies.
+
+[Full package checks](https://github.com/SlyZ1228/waraq/actions/runs/40168509631) passed with Xcode 26.6: both iPhoneOS and iPhoneSimulator app products build and pass macOS ad-hoc signature verification, including all 167 bundled resources. The reported obsolete 76x76@1x warning is absent. AppIntents metadata and duplicate-catalog warnings remain non-fatal. [Native checks](https://github.com/SlyZ1228/waraq/actions/runs/40168509662) also passed, including all 12 resource-location cases.
+
+A successful Run build on the iPad remains required. The prior reserved-folder test found a real macOS bundle-layout problem, but did not establish the cause of this persistent iPad error.
+
 ## v0.2.3 reserved data-folder signing fix
 
 The user confirmed the same -67072 error in v0.2.2, now naming `AppIcon76x76@2x~ipad.png`, while a new blank App runs in Swift Playgrounds 4.7. Replacing the icon was insufficient. The previous signing fixture omitted the copied Resources directory and therefore missed this packaging defect.

@@ -2,11 +2,11 @@
 
 A local Arabic EPUB reader with a bookshelf, four themes, persistent positions, and a word explorer. The **Swift Playgrounds project** bundles Kaikki, Lane, and a fully local CAMeL Morph analyzer. The same reader can be tested in a Windows browser.
 
-**[Download Waraq for Swift Playgrounds](https://github.com/SlyZ1228/waraq/releases/download/v0.2.3/Waraq-Playgrounds.zip)** · **[Release notes](https://github.com/SlyZ1228/waraq/releases/tag/v0.2.3)** · **[Installation guide](PLAYGROUNDS-SETUP.md)**
+**[Download Waraq for Swift Playgrounds](https://github.com/SlyZ1228/waraq/releases/download/v0.2.4/Waraq-Playgrounds.zip)** · **[Release notes](https://github.com/SlyZ1228/waraq/releases/tag/v0.2.4)** · **[Installation guide](PLAYGROUNDS-SETUP.md)**
 
-On your iPad, download the ZIP, unzip it in Files, open **Waraq.swiftpm** in Apple's **Swift Playgrounds**, and tap **Run**. The release ZIP includes the offline resources; GitHub's automatically generated **Source code** archives do not. No laptop server or App Store publishing is needed.
+On your iPad, download the ZIP, unzip it in Files, open **Waraq-0.2.4.swiftpm** in Apple's **Swift Playgrounds**, and tap **Run**. The release ZIP includes the offline resources; GitHub's automatically generated **Source code** archives do not. No laptop server or App Store publishing is needed.
 
-**Preview status:** the shared reader and analyzer are tested on Windows. The native Swift sources compile and link against the iOS Simulator SDK in GitHub's macOS CI, and resource-location tests pass. Running the complete project in Swift Playgrounds on an iPad remains to be verified. Launch through Swift Playgrounds rather than a separately installed app icon. Version 0.2.3 renames the bundled data folder to `WaraqData` to avoid Apple's reserved `Resources` bundle layout, which breaks signing. The icon-only change in 0.2.2 did not resolve the iPad error. This release retains the earlier `Bundle.module` fix; on-device signing still needs confirmation.
+**Preview status:** the shared reader and analyzer are tested on Windows. The native Swift sources compile and link against the iOS Simulator SDK in GitHub's macOS CI, and resource-location tests pass. Running the complete project in Swift Playgrounds on an iPad remains to be verified. Launch through Swift Playgrounds rather than a separately installed app icon. Version 0.2.4 removes obsolete icon sizes and gives the extracted project a versioned filename. The full app package is now checked with Xcode for device and Simulator targets; successful Run signing in Swift Playgrounds on the physical iPad still needs confirmation.
 
 ## Laptop preview
 

@@ -93,7 +93,7 @@ def main():
     report={'archive':archive.name,'bytes':archive.stat().st_size,'sha256':hashlib.sha256(archive.read_bytes()).hexdigest(),
             'dictionaryRows':counts,'morphologyBytes':manifest['bytes'],'databaseBytes':dbpath.stat().st_size,
             'appVersion':version,'projectName':project_name,'assets':assets,
-            'nativeCompilation':'GitHub macOS CI checks native compile/link, resource lookup, iPad icon compilation, a simulator app signature and the reserved-folder signing regression. Full Swift Playgrounds/device signing and run still required.'}
+            'nativeCompilation':'GitHub macOS CI builds full app packages for iOS device and Simulator with Xcode, checks complete resource seals, and runs native regressions. macOS ad-hoc signing does not verify Swift Playgrounds on-device signing or launch.'}
     (out/'package-report.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
     (out/'SHA256SUMS.txt').write_text(''.join(f'{info["sha256"]}  {name}\n' for name,info in assets.items()),encoding='ascii')
     print(json.dumps(report,indent=2))

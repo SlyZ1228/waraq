@@ -4,20 +4,20 @@ Targets iPadOS 17 or newer, including iPad Air M3. EPUB reading, Kaikki, Lane, a
 
 **Preview status:** the shared reader and offline analyzer have been tested on Windows. Native Swift sources compile and link against the iOS Simulator SDK in GitHub's macOS CI, with resource-location regression tests passing. Running the complete project in Playgrounds on an iPad is still the remaining compatibility check. This is a source app project, not an already signed `.ipa` installer.
 
-Version **0.2.3** moves the bundled data into `WaraqData`. A top-level folder named `Resources` conflicts with Apple's bundle/signing layout and can make the signer reject nearby files, including the app icon. The icon-only change in 0.2.2 did not solve the reported `-67072` failure. This version retains the earlier compiler fixes. Open the newly downloaded project, not the previous copy still open in Playgrounds. Keep the previous project until the new one opens successfully.
+Version **0.2.4** removes obsolete 1x iPad icons (including the 76x76 warning) and extracts as **Waraq-0.2.4.swiftpm**. Use that visibly versioned project for this test. Earlier changes did not yet establish a successful full Run build on the iPad; do not assume the macOS checks confirm device signing. Keep the old project until this one runs successfully.
 
 ## Transfer and run
 
 1. Install Apple's **Swift Playgrounds** on the iPad if needed.
-2. On the iPad, **[download Waraq-Playgrounds.zip](https://github.com/SlyZ1228/waraq/releases/download/v0.2.3/Waraq-Playgrounds.zip)** and save it to Files. You can also transfer it from another computer. Use this named release asset, not GitHub's **Source code (zip)** download. It is about 28 MB compressed and 178 MB expanded. Leave extra room for compilation and books.
-3. Save the new ZIP in a fresh Files folder (for example, **Waraq 0.2.3**), then tap it to extract it. Keep the complete **`Waraq.swiftpm`** project together; do not transfer only `Package.swift` or `Sources`.
-4. Open `Waraq.swiftpm` in Swift Playgrounds. If Files does not open it directly, try **Share → Swift Playgrounds**, or Playgrounds' document browser. Exact wording may vary by version.
+2. On the iPad, **[download Waraq-Playgrounds.zip](https://github.com/SlyZ1228/waraq/releases/download/v0.2.4/Waraq-Playgrounds.zip)** and save it to Files. You can also transfer it from another computer. Use this named release asset, not GitHub's **Source code (zip)** download. It is about 28 MB compressed and 178 MB expanded. Leave extra room for compilation and books.
+3. Save the new ZIP in a fresh Files folder (for example, **Waraq 0.2.4**), then tap it to extract it. Keep the complete **`Waraq-0.2.4.swiftpm`** project together; do not transfer only `Package.swift` or `Sources`.
+4. Open `Waraq-0.2.4.swiftpm` in Swift Playgrounds. If Files does not open it directly, try **Share → Swift Playgrounds**, or Playgrounds' document browser. Exact wording may vary by version.
 5. Tap **Run**. Initial compilation may take a little time. If offered, **Run App** opens the app in its own window.
 6. Choose **Try a short Arabic read**, then **Add a book** to import DRM-free EPUBs from Files.
 
 Return through Swift Playgrounds to launch the app. This workflow does not create a separately distributed App Store app. The dictionaries and morphology need no additional downloads inside the project.
 
-For this update, extract into a fresh folder rather than merging files into the old project: `Sources` should contain **WaraqData**, with no sibling folder named **Resources**. Package.swift should use `.copy("WaraqData")`. Close the old project and open the new copy. If a compiler or signing error persists, keep the project and send the full error message and its filename. Do not delete the project or its data while troubleshooting.
+Open the newly extracted **Waraq-0.2.4.swiftpm** directly from Files, rather than selecting an older Waraq entry in Playgrounds. You do not need to locate or edit Package.swift. The ZIP supplies the complete project and uses the safe WaraqData folder layout. If a compiler or signing error persists, keep the project and send the full error message and its filename. Do not delete the project or its data while troubleshooting.
 
 ## First checks
 

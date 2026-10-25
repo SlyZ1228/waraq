@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.2.4 — Clean project identity and full-package checks — 2026-10-25
+
+- Remove obsolete 1x iPad icons, including the 76x76@1x asset reported by Playgrounds 4.7.
+- Extract release ZIPs into a versioned project directory, starting with `Waraq-0.2.4.swiftpm`, to distinguish downloaded copies and provide a fresh document path. Preserve the app bundle identifier and library format.
+- Add full `xcodebuild` package checks using the real bundled dictionaries and web files, for both device and Simulator destinations. Inspect the generated Info.plist and resource seal, and ad-hoc sign/verify both app products on macOS. Retain native resource-location and folder-layout regressions.
+
+The user reported continued Run signing failure after the prior release while the preview loaded. The exact on-iPad -67072 error has not been reproduced here; preview success and macOS signing are not confirmation of Playgrounds' on-device Run signing. This preview makes that next test unambiguous and removes the reported obsolete-icon warning.
+
 ## v0.2.3 — App bundle layout fix — 2026-10-25
 
 - Move bundled reader and dictionary data from `Resources` to `WaraqData`. The reserved Resources name can make an otherwise flat iOS application use incompatible bundle/signing rules. The reported error names an icon, but replacing the icon in 0.2.2 did not resolve it.
