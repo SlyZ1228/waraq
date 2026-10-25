@@ -30,14 +30,25 @@ PY
 
 cd "$project"
 xcodebuild -version
-xcodebuild -workspace . -list -json
-xcodebuild -workspace . -scheme Waraq \
+xcodebuild -workspace . -list -json > "$RUNNER_TEMP/package-schemes.json"
+cat "$RUNNER_TEMP/package-schemes.json"
+scheme=$(python3 -c 'import json,os; from pathlib import Path; schemes=json.loads((Path(os.environ["RUNNER_TEMP"])/"package-schemes.json").read_text())["workspace"]["schemes"]; assert len(schemes)==1,schemes; print(schemes[0])')
+xcodebuild -workspace . -scheme "$scheme" \
   -destination 'generic/platform=iOS Simulator' \
   -derivedDataPath "$RUNNER_TEMP/WaraqPackageBuild" \
   CODE_SIGNING_ALLOWED=NO build > "$RUNNER_TEMP/package-build.log" 2>&1 || {
     tail -n 100 "$RUNNER_TEMP/package-build.log"
     exit 1
   }
+python3 - <<'PY'
+import os
+from pathlib import Path
+log = (Path(os.environ['RUNNER_TEMP']) / 'package-build.log').read_text()
+for line in log.splitlines():
+    if 'warning:' in line or 'error:' in line or '** BUILD ' in line:
+        print(line)
+assert '76x76@1x app icons only apply' not in log
+PY
 app="$RUNNER_TEMP/WaraqPackageBuild/Build/Products/Debug-iphonesimulator/Waraq.app"
 test -d "$app"
 find "$app" -maxdepth 2 -type d

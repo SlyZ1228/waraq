@@ -11,8 +11,10 @@ CATALOG = Path(__file__).resolve().parents[1] / 'playgrounds/Waraq.swiftpm/Sourc
 def assets():
     images = []
     files = {}
-    slots = [(size, scale, 'ipad') for size in (20, 29, 40, 76) for scale in (1, 2)]
-    slots += [(83.5, 2, 'ipad'), (1024, 1, 'ios-marketing')]
+    # iPadOS 17+ devices use Retina icons. The 76-point 1x slot is obsolete and
+    # produces an asset-compiler warning in Swift Playgrounds 4.7.
+    slots = [(size, 2, 'ipad') for size in (20, 29, 40, 76, 83.5)]
+    slots += [(1024, 1, 'ios-marketing')]
     for size, scale, idiom in slots:
         filename = f'AppIcon-{size}@{scale}x.png'
         # RGB PNG with no alpha channel, metadata or pre-rounded corners.
@@ -28,7 +30,12 @@ def assets():
 
 def main():
     check = '--check' in sys.argv
-    for relative, expected in assets().items():
+    generated = assets()
+    stale = [path for path in CATALOG.glob('AppIcon.appiconset/AppIcon-*.png')
+             if path.relative_to(CATALOG).as_posix() not in generated]
+    if check and stale:
+        raise SystemExit('Obsolete generated icon files remain: ' + ', '.join(p.name for p in stale))
+    for relative, expected in generated.items():
         path = CATALOG / relative
         if check:
             if not path.exists() or path.read_bytes() != expected:
@@ -36,7 +43,10 @@ def main():
         else:
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(expected)
-    print('Verified 10 opaque iPad/marketing icon assets.' if check else 'Wrote 10 opaque iPad/marketing icon assets.')
+    for path in stale:
+        path.unlink()
+    count = sum(name.endswith('.png') for name in generated)
+    print(f'{"Verified" if check else "Wrote"} {count} opaque iPad/marketing icon assets.')
 
 
 if __name__ == '__main__':
