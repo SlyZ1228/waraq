@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.2.3 — App bundle layout fix — 2026-10-25
+
+- Move bundled reader and dictionary data from `Resources` to `WaraqData`. The reserved Resources name can make an otherwise flat iOS application use incompatible bundle/signing rules. The reported error names an icon, but replacing the icon in 0.2.2 did not resolve it.
+- Update native resource discovery and packaging together, reject stale generated Sources/Resources folders, and retain legacy lookup support for older layouts.
+- Add a signing regression that rejects the old folder layout and signs/verifies the same bundle after changing only that folder name. Check that icons and reader data are sealed as ordinary resources.
+- Add four resource-location cases for WaraqData, alongside the eight existing checks.
+
+The user confirmed a new blank App runs in Swift Playgrounds 4.7. The folder-layout failure is reproducible with macOS codesign, although its diagnostic differs from the on-device -67072 error. A physical-iPad build and launch remain the final check. Extract this release in a fresh folder; do not merge it over the old project.
+
 ## v0.2.2 — Bundled iPad icons — 2026-10-25
 
 - Replace Playgrounds' generated placeholder icon with a processed AppIcon asset catalog, including opaque PNGs for all iPad icon sizes and the 1024 px marketing icon. This targets the reported signing error `NSOSStatusErrorDomain -67072` whose component path pointed to `_PlaceholderAppIcon76x76@2x~ipad.png`.

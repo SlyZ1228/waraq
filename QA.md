@@ -1,5 +1,17 @@
 # Offline / Playgrounds validation — 25 October 2026
 
+## v0.2.3 reserved data-folder signing fix
+
+The user confirmed the same -67072 error in v0.2.2, now naming `AppIcon76x76@2x~ipad.png`, while a new blank App runs in Swift Playgrounds 4.7. Replacing the icon was insufficient. The previous signing fixture omitted the copied Resources directory and therefore missed this packaging defect.
+
+Apple's [bundle signing rules](https://github.com/apple-oss-distributions/Security/blob/main/OSX/libsecurity_codesigning/lib/bundlediskrep.cpp#L638-L680) differ when a separate Resources directory exists; files adjacent to it can be classified as nested code. The new package preserves the data tree under the non-reserved name `WaraqData`, and native lookup accepts that name in both main and SwiftPM resource bundles.
+
+The regression first signs a flat simulator app, adds a root Resources/Web/index.html file, and confirms signing fails. It then changes only the directory name to WaraqData and requires signing and strict verification to succeed. Finally it inspects CodeResources to ensure the icon, Assets.car and HTML have content hashes rather than nested-code signatures. The macOS rejection is a bundle-format error, not a reproduction of the exact iPad OSStatus code.
+
+[Native CI passed](https://github.com/SlyZ1228/waraq/actions/runs/40167230524): native compile/link, both icon compiler targets, the old/new folder signing comparison, resource-seal inspection and all 12 resource-location checks. The 12 shared-reader tests and both frontend builds also passed. Release ZIP CRC/source parity, the absence of Sources/Resources, all 129 morphology hashes and packaged SQLite integrity passed.
+
+The final physical-iPad build, launch, offline lookup and persistence checks remain outstanding. Extract into a fresh folder so the old generated Sources/Resources tree is not retained.
+
 ## v0.2.2 icon signing workaround
 
 The next on-device build failed during signing with `NSOSStatusErrorDomain -67072` and a component path ending in `_PlaceholderAppIcon76x76@2x~ipad.png`. Apple's [code-signing error definitions](https://github.com/apple-oss-distributions/Security/blob/main/OSX/libsecurity_codesigning/lib/CSCommon.h) name this code `errSecCSUnimplemented`; the code alone does not establish the underlying cause. Waraq now uses a processed `AppIcon` asset catalog instead of Playgrounds' generated placeholder.
