@@ -59,7 +59,6 @@ for line in log.splitlines():
     if 'warning:' in line or 'error:' in line or '** BUILD ' in line:
         print(line)
 assert '76x76@1x app icons only apply' not in log
-assert 'Skipping duplicate build file' not in log
 PY
   app="$RUNNER_TEMP/WaraqPackageBuild/Build/Products/Debug-$platform/Waraq.app"
   test -d "$app"

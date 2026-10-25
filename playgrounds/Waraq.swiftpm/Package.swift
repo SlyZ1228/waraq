@@ -13,7 +13,7 @@ let package = Package(
         supportedInterfaceOrientations: [.portrait, .landscapeLeft, .landscapeRight, .portraitUpsideDown(.when(deviceFamilies: [.pad]))]
     )],
     targets: [.executableTarget(name: "AppModule", path: "Sources",
-        resources: [.copy("WaraqData")],
+        resources: [.copy("WaraqData"), .process("Assets.xcassets")],
         linkerSettings: [.linkedLibrary("sqlite3")])],
     swiftLanguageVersions: [.v5]
 )
