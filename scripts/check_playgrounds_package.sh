@@ -1,11 +1,15 @@
 #!/bin/bash
 # Exercise Package.swift through Xcode, including the full shipped resource tree.
 set -euo pipefail
-project="$PWD/playgrounds/Waraq.swiftpm"
+version=$(python3 -c 'import json; print(json.load(open("package.json"))["version"])')
+project="$RUNNER_TEMP/Waraq-$version.swiftpm"
 python3 - <<'PY'
 from pathlib import Path
 import hashlib
 import io
+import os
+import json
+import shutil
 import urllib.request
 import zipfile
 
@@ -26,6 +30,10 @@ with zipfile.ZipFile(io.BytesIO(data)) as archive:
         target.write_bytes(archive.read(entry))
 assert (destination / 'dictionaries.sqlite').is_file()
 print('Loaded the verified complete WaraqData tree for app-package validation.')
+version = json.loads(Path('package.json').read_text())['version']
+fresh = Path(os.environ['RUNNER_TEMP']) / f'Waraq-{version}.swiftpm'
+shutil.copytree(Path('playgrounds/Waraq.swiftpm'), fresh,
+                ignore=shutil.ignore_patterns('.swiftpm', '.build', '.DS_Store'))
 PY
 
 cd "$project"
@@ -33,13 +41,16 @@ xcodebuild -version
 xcodebuild -workspace . -list -json > "$RUNNER_TEMP/package-schemes.json"
 cat "$RUNNER_TEMP/package-schemes.json"
 scheme=$(python3 -c 'import json,os; from pathlib import Path; schemes=json.loads((Path(os.environ["RUNNER_TEMP"])/"package-schemes.json").read_text())["workspace"]["schemes"]; assert len(schemes)==1,schemes; print(schemes[0])')
-xcodebuild -workspace . -scheme "$scheme" \
-  -destination 'generic/platform=iOS Simulator' \
-  -derivedDataPath "$RUNNER_TEMP/WaraqPackageBuild" \
-  CODE_SIGNING_ALLOWED=NO build > "$RUNNER_TEMP/package-build.log" 2>&1 || {
-    tail -n 100 "$RUNNER_TEMP/package-build.log"
-    exit 1
-  }
+for platform in iphonesimulator iphoneos; do
+  destination='generic/platform=iOS Simulator'
+  if [ "$platform" = iphoneos ]; then destination='generic/platform=iOS'; fi
+  xcodebuild -workspace . -scheme "$scheme" \
+    -destination "$destination" \
+    -derivedDataPath "$RUNNER_TEMP/WaraqPackageBuild" \
+    CODE_SIGNING_ALLOWED=NO build > "$RUNNER_TEMP/package-build.log" 2>&1 || {
+      tail -n 100 "$RUNNER_TEMP/package-build.log"
+      exit 1
+    }
 python3 - <<'PY'
 import os
 from pathlib import Path
@@ -48,11 +59,28 @@ for line in log.splitlines():
     if 'warning:' in line or 'error:' in line or '** BUILD ' in line:
         print(line)
 assert '76x76@1x app icons only apply' not in log
+assert 'Skipping duplicate build file' not in log
 PY
-app="$RUNNER_TEMP/WaraqPackageBuild/Build/Products/Debug-iphonesimulator/Waraq.app"
-test -d "$app"
-find "$app" -maxdepth 2 -type d
-plutil -p "$app/Info.plist"
-codesign --force --sign - "$app"
-codesign --verify --deep --strict --verbose=2 "$app"
-echo 'Full app package built and its complete resource tree passed simulator signing.'
+  app="$RUNNER_TEMP/WaraqPackageBuild/Build/Products/Debug-$platform/Waraq.app"
+  test -d "$app"
+  test ! -d "$app/Resources"
+  test -s "$app/WaraqData/dictionaries.sqlite"
+  test -s "$app/AppIcon76x76@2x~ipad.png"
+  codesign --force --sign - "$app"
+  codesign --verify --deep --strict --verbose=2 "$app"
+  python3 - "$app" <<'PY'
+from pathlib import Path
+import plistlib
+import sys
+app = Path(sys.argv[1])
+with (app / 'Info.plist').open('rb') as source:
+    info = plistlib.load(source)
+assert info['CFBundleIcons~ipad']['CFBundlePrimaryIcon']['CFBundleIconName'] == 'AppIcon'
+with (app / '_CodeSignature/CodeResources').open('rb') as source:
+    files = plistlib.load(source)['files2']
+for name in ['AppIcon76x76@2x~ipad.png', 'Assets.car', 'WaraqData/Web/index.html', 'WaraqData/dictionaries.sqlite']:
+    assert 'hash2' in files[name] and 'cdhash' not in files[name], (name, files[name])
+print('Verified complete', info['CFBundleSupportedPlatforms'], 'app, version', info['CFBundleShortVersionString'], 'with', len(files), 'sealed resources.')
+PY
+done
+echo 'Both full app packages built and passed ad-hoc signing on macOS. iPad provisioning/launch still requires device testing.'

@@ -15,7 +15,7 @@ final class LocalStore {
     var database: OpaquePointer?
     init() throws {
         guard let resources = WaraqResources.locate() else {
-            throw WaraqError.message("The bundled reader resources are missing or incomplete. Open the complete Waraq.swiftpm from the release ZIP, including Sources/WaraqData. GitHub's Source code ZIP does not contain these resources.")
+            throw WaraqError.message("The bundled reader resources are missing or incomplete. Open the complete Waraq app project from the release ZIP, including Sources/WaraqData. GitHub's Source code ZIP does not contain these resources.")
         }
         self.resources = resources
         root = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("Waraq", isDirectory: true)

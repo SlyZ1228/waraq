@@ -15,6 +15,8 @@ PROJECT=ROOT/'playgrounds/Waraq.swiftpm'
 RESOURCES=PROJECT/'Sources/WaraqData'
 
 def main():
+    version=json.loads((ROOT/'package.json').read_text())['version']
+    project_name=f'Waraq-{version}.swiftpm'
     if (PROJECT/'Sources/Resources').exists():
         raise RuntimeError('Stale generated Sources/Resources folder found. Move it to Sources/WaraqData before packaging; Resources conflicts with Apple bundle signing.')
     subprocess.run([sys.executable, str(ROOT/'scripts/make_playgrounds_icons.py'), '--check'], check=True)
@@ -72,7 +74,7 @@ def main():
     with zipfile.ZipFile(archive,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=6) as package:
         for path in sorted(PROJECT.rglob('*')):
             if path.is_file() and not {'.swiftpm', '.build', '.DS_Store'}.intersection(path.relative_to(PROJECT).parts):
-                package.write(path,Path('Waraq.swiftpm')/path.relative_to(PROJECT))
+                package.write(path,Path(project_name)/path.relative_to(PROJECT))
     # Keep Lane's upstream XML-bearing database and our conversion source next to
     # the public binary distribution. This separate asset is not needed to run Waraq.
     lane_source=out/'Waraq-Lane-Source.zip'
@@ -90,7 +92,7 @@ def main():
             for path in [archive,lane_source]}
     report={'archive':archive.name,'bytes':archive.stat().st_size,'sha256':hashlib.sha256(archive.read_bytes()).hexdigest(),
             'dictionaryRows':counts,'morphologyBytes':manifest['bytes'],'databaseBytes':dbpath.stat().st_size,
-            'appVersion':json.loads((ROOT/'package.json').read_text())['version'],'assets':assets,
+            'appVersion':version,'projectName':project_name,'assets':assets,
             'nativeCompilation':'GitHub macOS CI checks native compile/link, resource lookup, iPad icon compilation, a simulator app signature and the reserved-folder signing regression. Full Swift Playgrounds/device signing and run still required.'}
     (out/'package-report.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
     (out/'SHA256SUMS.txt').write_text(''.join(f'{info["sha256"]}  {name}\n' for name,info in assets.items()),encoding='ascii')
