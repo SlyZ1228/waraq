@@ -1,0 +1,23 @@
+{
+  "checked_on": "2026-10-24",
+  "checks": "Downloaded public source artifacts to temporary storage; inspected morphology headers and Lane ZIP central directory. No analyzer execution or browser benchmarks.",
+  "artifacts": [
+    {
+      "name": "CAMeL Morph MSA v1.0",
+      "url": "https://raw.githubusercontent.com/CAMeL-Lab/camel_morph/main/official_releases/lrec-coling2024_release/databases/camel-morph-msa/camel_morph_msa_v1.0.db",
+      "git_blob_sha": "19f528666fda8b1cd67ef838089166a95eecc591",
+      "bytes": 84959404,
+      "observed_fields": ["diac", "lex", "caphi", "gloss", "bw", "pos", "root", "pattern", "pattern_abstract"],
+      "license_source": "https://github.com/CAMeL-Lab/camel_morph/blob/main/official_releases/lrec-coling2024_release/README.md"
+    },
+    {
+      "name": "Lane's Lexicon SQLite archive",
+      "url": "https://raw.githubusercontent.com/laneslexicon/LexiconDatabase/master/lexicon.sqlite.zip",
+      "git_blob_sha": "5223cde01ad26f41c1e1026e711c20b35b0a5bd6",
+      "archive_bytes": 61636179,
+      "zip_entry": "lexicon.sqlite",
+      "uncompressed_bytes": 264806400,
+      "license_source": "https://github.com/laneslexicon/LexiconDatabase/blob/master/LICENSE"
+    }
+  ]
+}

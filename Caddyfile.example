@@ -1,0 +1,8 @@
+# Replace this example IP with your computer's stable LAN IPv4 address.
+# Install Caddy separately. Copy to Caddyfile and run: caddy run --config Caddyfile
+# Trust Caddy's local root certificate on the iPad; see README.md.
+https://192.168.1.50 {
+    tls internal
+    encode zstd gzip
+    reverse_proxy 127.0.0.1:8000
+}

@@ -1,0 +1,13 @@
+# Morphology-only dependencies. Install camel-tools separately with --no-deps.
+# The full camel-tools extra includes ML stacks that this app does not use.
+fastapi==0.162.0
+uvicorn==0.54.0
+cachetools==7.2.4
+requests==2.34.2
+tqdm==4.70.1
+dill==0.4.1
+emoji==2.16.0
+six==1.17.0
+pyrsistent==0.20.0
+muddler==0.1.3
+docopt==0.6.2
