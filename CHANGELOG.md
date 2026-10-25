@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.2.2 — Bundled iPad icons — 2026-10-25
+
+- Replace Playgrounds' generated placeholder icon with a processed AppIcon asset catalog, including opaque PNGs for all iPad icon sizes and the 1024 px marketing icon. This targets the reported signing error `NSOSStatusErrorDomain -67072` whose component path pointed to `_PlaceholderAppIcon76x76@2x~ipad.png`.
+- Add macOS CI checks that compile the icons for both the iOS device and Simulator platforms and ad-hoc sign/verify a simulator app bundle containing those assets.
+- Keep the v0.2.1 resource lookup fix and the existing library storage format.
+
+The placeholder path is removed from the project configuration. The exact iPad failure has not been reproduced on the Mac runner, so successful signing and launch in Swift Playgrounds remain to be confirmed. Extract the new ZIP into a fresh folder and open that project; keep the old project and any library backups.
+
 ## v0.2.1 — Playgrounds resource fix — 2026-10-25
 
 - Fix the reported `Type 'Bundle' has no member 'module'` compiler error and the associated `nil` type-inference error in LocalStore.

@@ -4,6 +4,7 @@ import hashlib
 import json
 import shutil
 import sqlite3
+import subprocess
 import sys
 import zipfile
 
@@ -14,6 +15,7 @@ PROJECT=ROOT/'playgrounds/Waraq.swiftpm'
 RESOURCES=PROJECT/'Sources/Resources'
 
 def main():
+    subprocess.run([sys.executable, str(ROOT/'scripts/make_playgrounds_icons.py'), '--check'], check=True)
     web=RESOURCES/'Web'
     web.mkdir(parents=True,exist_ok=True)
     for filename in ['app.js','app.css']:
@@ -87,7 +89,7 @@ def main():
     report={'archive':archive.name,'bytes':archive.stat().st_size,'sha256':hashlib.sha256(archive.read_bytes()).hexdigest(),
             'dictionaryRows':counts,'morphologyBytes':manifest['bytes'],'databaseBytes':dbpath.stat().st_size,
             'appVersion':json.loads((ROOT/'package.json').read_text())['version'],'assets':assets,
-            'nativeCompilation':'Native Swift compile/link and resource tests run in GitHub macOS CI. Full Swift Playgrounds/device run still required.'}
+            'nativeCompilation':'GitHub macOS CI checks native compile/link, resource lookup, iPad icon compilation and a simulator app signature. Full Swift Playgrounds/device signing and run still required.'}
     (out/'package-report.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
     (out/'SHA256SUMS.txt').write_text(''.join(f'{info["sha256"]}  {name}\n' for name,info in assets.items()),encoding='ascii')
     print(json.dumps(report,indent=2))

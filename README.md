@@ -2,11 +2,11 @@
 
 A local Arabic EPUB reader with a bookshelf, four themes, persistent positions, and a word explorer. The **Swift Playgrounds project** bundles Kaikki, Lane, and a fully local CAMeL Morph analyzer. The same reader can be tested in a Windows browser.
 
-**[Download Waraq for Swift Playgrounds](https://github.com/SlyZ1228/waraq/releases/download/v0.2.1/Waraq-Playgrounds.zip)** · **[Release notes](https://github.com/SlyZ1228/waraq/releases/tag/v0.2.1)** · **[Installation guide](PLAYGROUNDS-SETUP.md)**
+**[Download Waraq for Swift Playgrounds](https://github.com/SlyZ1228/waraq/releases/download/v0.2.2/Waraq-Playgrounds.zip)** · **[Release notes](https://github.com/SlyZ1228/waraq/releases/tag/v0.2.2)** · **[Installation guide](PLAYGROUNDS-SETUP.md)**
 
 On your iPad, download the ZIP, unzip it in Files, open **Waraq.swiftpm** in Apple's **Swift Playgrounds**, and tap **Run**. The release ZIP includes the offline resources; GitHub's automatically generated **Source code** archives do not. No laptop server or App Store publishing is needed.
 
-**Preview status:** the shared reader and analyzer are tested on Windows. The native Swift sources compile and link against the iOS Simulator SDK in GitHub's macOS CI, and resource-location tests pass. Running the complete project in Swift Playgrounds on an iPad remains to be verified. Launch through Swift Playgrounds rather than a separately installed app icon. Version 0.2.1 fixes the `Bundle.module` compile error reported in 0.2.0.
+**Preview status:** the shared reader and analyzer are tested on Windows. The native Swift sources compile and link against the iOS Simulator SDK in GitHub's macOS CI, and resource-location tests pass. Running the complete project in Swift Playgrounds on an iPad remains to be verified. Launch through Swift Playgrounds rather than a separately installed app icon. Version 0.2.2 replaces the generated placeholder icon with bundled iPad icon assets to address the reported signing failure; it also includes the earlier `Bundle.module` fix. On-device signing still needs confirmation.
 
 ## Laptop preview
 

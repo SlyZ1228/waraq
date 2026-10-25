@@ -1,5 +1,14 @@
 # Offline / Playgrounds validation — 25 October 2026
 
+## v0.2.2 icon signing workaround
+
+The next on-device build failed during signing with `NSOSStatusErrorDomain -67072` and a component path ending in `_PlaceholderAppIcon76x76@2x~ipad.png`. Apple's [code-signing error definitions](https://github.com/apple-oss-distributions/Security/blob/main/OSX/libsecurity_codesigning/lib/CSCommon.h) name this code `errSecCSUnimplemented`; the code alone does not establish the underlying cause. Waraq now uses a processed `AppIcon` asset catalog instead of Playgrounds' generated placeholder.
+
+- Release ZIP CRC and source parity checks pass. All ten icons decode as square, 8-bit RGB PNGs with no alpha, correct dimensions and valid CRCs. All 129 bundled morphology files match their manifest hashes. SQLite integrity passes during packaging.
+- [Native Mac runner checks](https://github.com/SlyZ1228/waraq/actions/runs/40166440238) passed: native compile/link, all eight resource-location regressions, Apple asset compilation for both device and simulator, and ad-hoc signing plus strict signature verification of a simulator app fixture containing the native executable and compiled icons.
+- This cannot reproduce Swift Playgrounds' on-device signing/provisioning. Confirm successful build and launch on the iPad Air M3; then test the native bridge, offline lookup, library persistence and PDF/File interfaces.
+- Download the new project ZIP into a fresh Files folder. Keep the old project and any user-library backups. A remaining error naming `_PlaceholderAppIcon` can indicate an old project or cached build; check that the open Package.swift uses `appIcon: .asset("AppIcon")`.
+
 ## v0.2.1 native compile fix
 
 The user reported that v0.2.0 did not compile in Swift Playgrounds: `Bundle` had no `module` member and `nil` lacked a contextual type in the same resource lookup. The generated accessor has been replaced by app-owned bundle discovery with validation of the expected Web/dictionary tree. The manifest still copies the Resources directory intact.
