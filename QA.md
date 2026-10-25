@@ -1,6 +1,16 @@
 # Offline / Playgrounds validation — 25 October 2026
 
-This section supersedes the older Phase 1 limitations below. **The Swift app has not been compiled or run on an iPad.** Windows validates the shared web code, packaged data, and bridge contract; it cannot validate UIKit, PDFKit, or Swift Playgrounds lifecycle behavior.
+## v0.2.1 native compile fix
+
+The user reported that v0.2.0 did not compile in Swift Playgrounds: `Bundle` had no `module` member and `nil` lacked a contextual type in the same resource lookup. The generated accessor has been replaced by app-owned bundle discovery with validation of the expected Web/dictionary tree. The manifest still copies the Resources directory intact.
+
+- [GitHub native checks](https://github.com/SlyZ1228/waraq/actions/runs/40165233659) passed: all native Swift sources compiled and linked using the iOS Simulator SDK with an iOS 17 deployment target and Swift 5 language mode.
+- Eight Swift regression checks passed on macOS: copied Resources folder, resources at the bundle root, embedded SwiftPM bundle, renamed embedded bundle, incomplete resources, missing resources, main-bundle preference, and Foundation's macOS resourceURL layout.
+- This is not a physical-iPad or Swift Playgrounds packaging/runtime test. The iPad still needs to open the v0.2.1 ZIP and run it, including verifying WKWebView asset loading, native storage, and the Files/PDF interfaces.
+
+## Earlier shared-reader checks
+
+This section supersedes the older Phase 1 limitations below. Windows validates the shared web code, packaged data, and bridge contract; Swift Playgrounds lifecycle behavior still needs physical-device validation.
 
 ## Completed checks
 

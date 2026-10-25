@@ -87,7 +87,7 @@ def main():
     report={'archive':archive.name,'bytes':archive.stat().st_size,'sha256':hashlib.sha256(archive.read_bytes()).hexdigest(),
             'dictionaryRows':counts,'morphologyBytes':manifest['bytes'],'databaseBytes':dbpath.stat().st_size,
             'appVersion':json.loads((ROOT/'package.json').read_text())['version'],'assets':assets,
-            'nativeCompilation':'Requires Swift Playgrounds on iPad; not compiled on Windows.'}
+            'nativeCompilation':'Native Swift compile/link and resource tests run in GitHub macOS CI. Full Swift Playgrounds/device run still required.'}
     (out/'package-report.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
     (out/'SHA256SUMS.txt').write_text(''.join(f'{info["sha256"]}  {name}\n' for name,info in assets.items()),encoding='ascii')
     print(json.dumps(report,indent=2))

@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.2.1 — Playgrounds resource fix — 2026-10-25
+
+- Fix the reported `Type 'Bundle' has no member 'module'` compiler error and the associated `nil` type-inference error in LocalStore.
+- Locate the complete resource tree through the main app bundle or an embedded SwiftPM resource bundle without depending on a generated accessor or a hardcoded bundle name.
+- Add GitHub macOS CI that compiles and links all native Swift sources against the iOS Simulator SDK and runs eight resource-location regression checks.
+
+The native compiler and resource tests passed. Running the complete project in Swift Playgrounds on the physical iPad remains to be verified. Download the v0.2.1 project ZIP; no book-storage migration is required by this fix.
+
 ## v0.2.0 — Swift Playgrounds preview — 2026-10-25
 
 First public release. The shared reader is tested on Windows; native Swift compilation and physical-iPad validation remain pending.

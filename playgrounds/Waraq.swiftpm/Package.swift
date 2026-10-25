@@ -7,7 +7,7 @@ let package = Package(
     platforms: [.iOS("17.0")],
     products: [.iOSApplication(
         name: "Waraq", targets: ["AppModule"],
-        bundleIdentifier: "local.waraq.reader", displayVersion: "0.2.0", bundleVersion: "2",
+        bundleIdentifier: "local.waraq.reader", displayVersion: "0.2.1", bundleVersion: "3",
         appIcon: .placeholder(icon: .paper), accentColor: .presetColor(.green),
         supportedDeviceFamilies: [.pad],
         supportedInterfaceOrientations: [.portrait, .landscapeLeft, .landscapeRight, .portraitUpsideDown(.when(deviceFamilies: [.pad]))]

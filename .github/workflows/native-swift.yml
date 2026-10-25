@@ -28,11 +28,13 @@ jobs:
       - name: Compile the native shell with the iOS Simulator SDK
         run: |
           xcrun swiftc -version
-          xcrun swiftc -swift-version 5 -parse-as-library \
+          xcrun --sdk iphonesimulator swiftc -swift-version 5 -parse-as-library \
             -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" \
             -target arm64-apple-ios17.0-simulator \
             -o "$RUNNER_TEMP/Waraq" -lsqlite3 \
             playgrounds/Waraq.swiftpm/Sources/*.swift
+          file "$RUNNER_TEMP/Waraq"
+          xcrun vtool -show-build "$RUNNER_TEMP/Waraq"
       - name: Run resource location regression tests
         run: |
           xcrun swiftc -swift-version 5 \
